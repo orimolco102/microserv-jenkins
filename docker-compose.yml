@@ -1,0 +1,31 @@
+services:
+
+  two-ms-api:
+    build:
+      context: ./api
+
+      args:
+        API_BUILDNUM: ${API_BUILDNUM:-local}
+        API_COMMNUM: ${API_COMMNUM:-unknown}
+    expose:
+      - "3000"
+    networks:
+      - app-network
+
+  web:
+    build:
+      context: ./Front
+
+      args:
+        WEB_BUILDNUM: ${WEB_BUILDNUM:-local}
+        WEB_COMMNUM: ${WEB_COMMNUM:-unknown}
+
+    ports:
+      - "8080:8080"
+    
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

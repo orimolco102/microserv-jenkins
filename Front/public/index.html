@@ -28,9 +28,15 @@
     justify-content:center;
     padding:24px;
   }
+  .page{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  width:100%;
+  max-width:520px;
+  }
   .card{
     width:100%;
-    max-width:520px;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:10px;
@@ -82,21 +88,39 @@
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="card-head">
-      <h1>web</h1>
-      <div class="status-row">
-        <span class="dot" id="statusDot"></span>
-        <span id="statusText">בודק חיבור…</span>
+
+  <div class="page">
+    
+    <div class="card">
+      <div class="card-head">
+        <h1>web</h1>
+        <div class="status-row">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">בודק חיבור…</span>
+        </div>
       </div>
-    </div>
-    <div class="build-strip">
-      <span>build <b id="buildNum">—</b></span>
-      <span>commit <b id="commitHash">—</b></span>
-    </div>
-    <div class="body">
-      <p class="lead">נתונים שהתקבלו מ-<span style="font-family:var(--mono)">api</span> דרך הרשת הפנימית:</p>
-      <ul id="items"></ul>
+      <div class="build-strip">
+        <span>build <b id="buildNum">—</b></span>
+        <span>commit <b id="commitHash">—</b></span>
+      </div>
+      <div class="body">
+        <p class="lead">נתונים שהתקבלו מ-<span style="font-family:var(--mono)">api</span> דרך הרשת הפנימית:</p>
+        <ul id="items"></ul>
+      </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h1>🎲 הגרלה</h1>
+      </div>
+      <div class="body">
+        <p class="lead">בחר טווח מספרים וקבל תוצאה אקראית מ-<span style="font-family:var(--mono)">api</span>:</p>
+        <div class="random-box">
+          <input type="number" id="minInput" placeholder="min">
+          <input type="number" id="maxInput" placeholder="max">
+          <button id="rollBtn">הגרל</button>
+          <p id="randomResult"></p>
+        </div>
+      </div>    
     </div>
   </div>
 </body>
