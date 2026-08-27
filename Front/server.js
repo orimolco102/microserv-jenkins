@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config({path: '../.env'});
 
 const app = express();
-const PORT = 8080;
+const PORT = 8000;
 
 //serves the HTML and js files
 app.use(express.static('public'));

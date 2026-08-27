@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('install & test API') {
+            steps {
+                dir('API') {
+                    bat 'npm install'
+                    bat 'node --test --experimental-test-coverage --test-coverage-line=80'
+                }
+            }
+        }
+
+        stage('install & test Web') {
+            step {
+                dir('Front') {
+                    bat 'npm install'
+                    bat 'node --test --experimental-test-coverage --test-coverage-lines=80'
+                }
+            }
+        }
+
+        stage('Integration test') {
+            step {
+                dir('integration_test') {
+                    bat 'node --test'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'blue-green'
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ services:
 
   two-ms-api:
     build:
-      context: ./api
+      context: ./API
 
       args:
         API_BUILDNUM: ${API_BUILDNUM:-local}
@@ -21,7 +21,7 @@ services:
         WEB_COMMNUM: ${WEB_COMMNUM:-unknown}
 
     ports:
-      - "8080:8080"
+      - "8000:8000"
     
     networks:
       - app-network

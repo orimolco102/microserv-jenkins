@@ -12,6 +12,6 @@ ENV WEB_COMMNUM=$WEB_COMMNUM
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8000
 
 CMD [ "node", "server.js" ]
