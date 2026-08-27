@@ -34,7 +34,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo 'blue-green'
+                echo 'blue-green deploy'
             }
         }
     }
