@@ -20,13 +20,13 @@ async function waitForService(url, timeoutMs = 15000, interMs = 500) {
 
 before(async () => {
     //מעלה את הדוקרים ומפעיל את הפונקציה שבודקת האם הקונטירים עלו בהצלחה
-    execSync('docker compose -f ../docker-compose.yml up -d --build', {stdio: 'inherit'});
-    await waitForService('http://localhost:8080/health');
-    await waitForService('http://localhost:8080/status');
+    execSync('docker compose -f ./docker-compose.yml up -d --build', {stdio: 'inherit'});
+    await waitForService('http://localhost:8000/health');
+    await waitForService('http://localhost:8000/status');
 });
 
 test('status returns 200 and is ok', async () => {
-    const res = await fetch('http://localhost:8080/status');
+    const res = await fetch('http://localhost:8000/status');
     assert.strictEqual(res.status, 200);
 
     const data = await res.json();
@@ -34,7 +34,7 @@ test('status returns 200 and is ok', async () => {
 });
 
 test('stastus returns the build and commit', async () => {
-    const res = await fetch('http://localhost:8080/status');
+    const res = await fetch('http://localhost:8000/status');
     const data = await res.json();
 
     assert.ok(data.build, 'build num is defined');
@@ -42,14 +42,14 @@ test('stastus returns the build and commit', async () => {
 });
 
 test('api sends currect messages', async () => {
-    const res = await fetch('http://localhost:8080/status');
+    const res = await fetch('http://localhost:8000/status');
     const data = await res.json();
     
     assert.strictEqual(data.message, 'The api and front end are talking!!!');
 });
 
 test('random function with currect input', async () => {
-    const res = await fetch ('http://localhost:8080/random?min=7&max=7');
+    const res = await fetch ('http://localhost:8000/random?min=7&max=7');
     const data = await res.json();
 
     assert.strictEqual(res.status, 200);
@@ -57,12 +57,12 @@ test('random function with currect input', async () => {
 });
 
 test('random test with invalid input returns 400', async () => {
-    const res = await fetch ('http://localhost:8080/random?min=adsf&max=7');
+    const res = await fetch ('http://localhost:8000/random?min=adsf&max=7');
 
     assert.strictEqual(res.status, 400);
 });
 
 after(() => {
     //מכבה את הקונטיינרים לאחר שכל הבדיקות הסתיימו
-    execSync('docker compose -f ../docker-compose.yml down', { stdio: 'inherit' });
+    execSync('docker compose -f ./docker-compose.yml down', { stdio: 'inherit' });
 });
