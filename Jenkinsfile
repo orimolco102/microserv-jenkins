@@ -7,7 +7,7 @@ pipeline {
             steps {
                 dir('API') {
                     sh 'npm install'
-                    sh 'node --test --experimental-test-coverage --test-coverage-line=80'
+                    sh 'node --test --experimental-test-coverage --test-coverage-lines=80'
                 }
             }
         }
