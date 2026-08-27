@@ -3,6 +3,10 @@ const assert = require('node:assert');
 const { execSync } = require("child_process");
 const { resolve } = require("node:dns");
 const { getAssetAsBlob } = require("node:sea");
+const path = require('path');
+
+const composeFile = path.join(__dirname, '..', 'docker-compose.yml');
+
 
 async function waitForService(url, timeoutMs = 15000, interMs = 500) {
     const start = Date.now();
