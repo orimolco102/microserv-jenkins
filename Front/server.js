@@ -64,7 +64,7 @@ app.get('/health', (req, res) => {
 
 if(require.main === module) {
     app.listen (PORT, () => {
-        console.log(`front is running on port ${PORT}`);
+        console.log(`front is running on port: ${PORT}`);
     });
 }
 
