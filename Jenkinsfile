@@ -6,8 +6,8 @@ pipeline {
         stage('install & test API') {
             steps {
                 dir('API') {
-                    bat 'npm install'
-                    bat 'node --test --experimental-test-coverage --test-coverage-line=80'
+                    sh 'npm install'
+                    sh 'node --test --experimental-test-coverage --test-coverage-line=80'
                 }
             }
         }
@@ -15,8 +15,8 @@ pipeline {
         stage('install & test Web') {
             steps {
                 dir('Front') {
-                    bat 'npm install'
-                    bat 'node --test --experimental-test-coverage --test-coverage-lines=80'
+                    sh 'npm install'
+                    sh 'node --test --experimental-test-coverage --test-coverage-lines=80'
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
         stage('Integration test') {
             steps {
                 dir('integration_test') {
-                    bat 'node --test'
+                    sh 'node --test'
                 }
             }
         }
