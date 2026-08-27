@@ -24,7 +24,7 @@ async function waitForService(url, timeoutMs = 15000, interMs = 500) {
 
 before(async () => {
     //מעלה את הדוקרים ומפעיל את הפונקציה שבודקת האם הקונטירים עלו בהצלחה
-    execSync(`docker compose -f ${composeFile} up -d --build`, {stdio: 'inherit'});
+    execSync(`docker compose -f "${composeFile}" up -d --build`, {stdio: 'inherit'});
     await waitForService('http://localhost:8000/health');
     await waitForService('http://localhost:8000/status');
 });
@@ -68,5 +68,5 @@ test('random test with invalid input returns 400', async () => {
 
 after(() => {
     //מכבה את הקונטיינרים לאחר שכל הבדיקות הסתיימו
-    execSync(`docker compose -f ${composeFile} down`, { stdio: 'inherit' });
+    execSync(`docker compose -f "${composeFile}" down`, { stdio: 'inherit' });
 });
