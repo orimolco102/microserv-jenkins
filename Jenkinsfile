@@ -80,8 +80,10 @@ pipeline {
             }
             steps {
                 sshagent(['ec2-deploy-key']) {
-                    scp -o StrictHostKeyChecking=no docker-compose.prod.yml deploy@51.20.105.107:~/docker-compose.prod.yml
-                    bat 'ssh -o StrictHostKeyChecking=no deploy@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"'
+                    bat '''
+                        scp -o StrictHostKeyChecking=no docker-compose.prod.yml deploy@51.20.105.107:~/docker-compose.prod.yml
+                        ssh -o StrictHostKeyChecking=no deploy@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
+                    '''
                 }
             }
         }
