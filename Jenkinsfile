@@ -81,6 +81,8 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     bat '''
+                        icacls "%SSH_KEY%" /inheritance:r
+                        icacls "%SSH_KEY%" /grant:r %USERNAME%:F
                         scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
                         ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
                     '''
