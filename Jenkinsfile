@@ -90,7 +90,9 @@ pipeline {
 
                         scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
                         scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" deploy.sh %SSH_USER%@51.20.105.107:~/deploy.sh
+                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "rm -rf ~/nginx"
                         scp -o StrictHostKeyChecking=no -r -i "%SSH_KEY%" nginx %SSH_USER%@51.20.105.107:~/nginx
+
 
                         ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
                     '''
