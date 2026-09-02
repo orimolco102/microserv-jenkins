@@ -61,20 +61,20 @@ pipeline {
             steps {
                 echo 'Deploying to prod'
                 script {
-                        env.API_COMMNUM = bat(script: '@git rev-parse --short HEAD', returnStdout: true).trim()
-                        env.WEB_COMMNUM = env.API_COMMNUM
-                    }
+                    env.API_COMMNUM = bat(script: '@git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.WEB_COMMNUM = env.API_COMMNUM
+                }
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat '''
                         echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
-                        docker build -t %DOCKER_USER%/web-app:%BUILD_NUMBER% -t %DOCKER_USER%/web-app:latest ./Front
-                        docker build -t %DOCKER_USER%/api-service:%BUILD_NUMBER% -t %DOCKER_USER%/api-service:latest ./API
+                        docker build --build-arg WEB_BUILDNUM=%BUILD_NUMBER% --build-arg WEB_COMMNUM=%WEB_COMMNUM% -t %DOCKER_USER%/web-app:%BUILD_NUMBER% -t %DOCKER_USER%/web-app:latest ./Front
+                        docker build --build-arg API_BUILDNUM=%BUILD_NUMBER% --build-arg API_COMMNUM=%API_COMMNUM% -t %DOCKER_USER%/api-service:%BUILD_NUMBER% -t %DOCKER_USER%/api-service:latest ./API
                         docker push %DOCKER_USER%/web-app:%BUILD_NUMBER%
                         docker push %DOCKER_USER%/web-app:latest
                         docker push %DOCKER_USER%/api-service:%BUILD_NUMBER%
                         docker push %DOCKER_USER%/api-service:latest
                     '''
-                }    
+                }
             }
         }
 
