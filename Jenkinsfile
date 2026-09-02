@@ -95,7 +95,7 @@ pipeline {
                     '''
 
                     retry(3) {
-                        try{
+                        try {
                             bat '''
                                 ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
                             '''
