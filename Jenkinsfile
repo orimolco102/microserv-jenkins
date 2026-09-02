@@ -60,6 +60,10 @@ pipeline {
             }
             steps {
                 echo 'Deploying to prod'
+                script {
+                        env.API_COMMNUM = bat(script: '@git rev-parse --short HEAD', returnStdout: true).trim()
+                        env.WEB_COMMNUM = env.API_COMMNUM
+                    }
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat '''
                         echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
