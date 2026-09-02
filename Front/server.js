@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = 8000;
-
+const API_URL = process.env.API_URL || "http://localhost:3000";
 //serves the HTML and js files
 app.use(express.static('public'));
 
@@ -13,14 +13,14 @@ app.use(express.static('public'));
 app.get('/status', async (req, res) => {
     
     try {
-        const health_res = await fetch('http://two-ms-api:3000/health');
+        const health_res = await fetch(`${API_URL}/health`);
         //checkes if the api returns an error, if does, throws the code to the catch.
         if (!health_res.ok) {
             throw new Error (`api health check failed, status: ${health_res.status}`);
         }
         const health_data = await health_res.json();
     
-        const data_res = await fetch('http://two-ms-api:3000/data');
+        const data_res = await fetch(`${API_URL}/data`);
         if (!data_res.ok) {
             throw new Error (`api data fetch failed, status: ${data_res.status}`);
         }
@@ -41,7 +41,7 @@ app.get('/status', async (req, res) => {
 app.get('/random', async (req, res) => {
     const {min, max} = req.query;
     try {
-        const api_res = await fetch(`http://two-ms-api:3000/random?min=${min}&max=${max}`);
+        const api_res = await fetch(`${API_URL}/random?min=${min}&max=${max}`);
 
         if (!api_res.ok) {
             const errorData = await api_res.json();

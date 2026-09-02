@@ -1,32 +1,60 @@
 services:
 
-  two-ms-api:
-    image: orimolco/api-service:latest
-    build:
-      context: ./API
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - app-network
+    restart: unless-stopped
 
-      args:
-        API_BUILDNUM: ${API_BUILDNUM:-local}
-        API_COMMNUM: ${API_COMMNUM:-unknown}
+  web-blue:
+    image: orimolco/web-app:latest
+    container_name: web-blue
+    expose:
+      - "8000"
+    environment:
+      - API_URL=http://nginx:3001
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["blue"]
+
+  web-green:
+    image: orimolco/web-app:latest
+    container_name: web-green
+    expose:
+      - "8000"
+    environment:
+      - API_URL=http://nginx:3001
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["green"]
+
+  api-blue:
+    image: orimolco/api-service:latest
+    container_name: api-blue
     expose:
       - "3000"
     networks:
       - app-network
+    restart: unless-stopped
+    profiles: ["blue"]
 
-  web:
-    image: orimolco/web-app:latest
-    build:
-      context: ./Front
-
-      args:
-        WEB_BUILDNUM: ${WEB_BUILDNUM:-local}
-        WEB_COMMNUM: ${WEB_COMMNUM:-unknown}
-
-    ports:
-      - "8000:8000"
-    
+  api-green:
+    image: orimolco/api-service:latest
+    container_name: api-green
+    expose:
+      - "3000"
     networks:
       - app-network
+    restart: unless-stopped
+    profiles: ["green"]
 
 networks:
   app-network:

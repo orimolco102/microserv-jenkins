@@ -23,6 +23,8 @@ services:
     container_name: two-ms-web
     ports:
       - "8000:8000"
+    environment:
+      - API_URL=http://two-ms-api:3000
     depends_on:
       - two-ms-api
     networks:
