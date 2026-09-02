@@ -92,8 +92,7 @@ pipeline {
                         scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" deploy.sh %SSH_USER%@51.20.105.107:~/deploy.sh
                         scp -o StrictHostKeyChecking=no -r -i "%SSH_KEY%" nginx %SSH_USER%@51.20.105.107:~/nginx
 
-                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
-                    '''
+                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "sed -i 's/\r$//' ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"                    '''
                 }
             }
         }
