@@ -79,10 +79,10 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sshagent(['ec2-deploy-key']) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     bat '''
-                        scp -o StrictHostKeyChecking=no docker-compose.prod.yml deploy@51.20.105.107:~/docker-compose.prod.yml
-                        ssh -o StrictHostKeyChecking=no deploy@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
+                        scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
+                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
                     '''
                 }
             }
