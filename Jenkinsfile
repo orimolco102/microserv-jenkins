@@ -87,8 +87,12 @@ pipeline {
                     bat '''
                         icacls "%SSH_KEY%" /inheritance:r
                         icacls "%SSH_KEY%" /grant:r %USERNAME%:F
+
                         scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
-                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
+                        scp -o StrictHostKeyChecking=no -i "%SSH_KEY%" deploy.sh %SSH_USER%@51.20.105.107:~/deploy.sh
+                        scp -o StrictHostKeyChecking=no -r -i "%SSH_KEY%" nginx %SSH_USER%@51.20.105.107:~/nginx
+
+                        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
                     '''
                 }
             }
