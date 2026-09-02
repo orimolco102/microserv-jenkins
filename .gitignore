@@ -1,0 +1,4 @@
+.env
+node_modules
+jenkins-deploy-key
+jenkins-deploy-key.pub

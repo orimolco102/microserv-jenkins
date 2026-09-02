@@ -1,28 +1,30 @@
 services:
 
   two-ms-api:
+    image: orimolco/api-service:latest
     build:
       context: ./API
-
       args:
         API_BUILDNUM: ${API_BUILDNUM:-local}
         API_COMMNUM: ${API_COMMNUM:-unknown}
+    container_name: two-ms-api
     expose:
       - "3000"
     networks:
       - app-network
 
   web:
+    image: orimolco/web-app:latest
     build:
       context: ./Front
-
       args:
         WEB_BUILDNUM: ${WEB_BUILDNUM:-local}
         WEB_COMMNUM: ${WEB_COMMNUM:-unknown}
-
+    container_name: two-ms-web
     ports:
       - "8000:8000"
-    
+    depends_on:
+      - two-ms-api
     networks:
       - app-network
 

@@ -1,0 +1,33 @@
+services:
+
+  two-ms-api:
+    image: orimolco/api-service:latest
+    build:
+      context: ./API
+
+      args:
+        API_BUILDNUM: ${API_BUILDNUM:-local}
+        API_COMMNUM: ${API_COMMNUM:-unknown}
+    expose:
+      - "3000"
+    networks:
+      - app-network
+
+  web:
+    image: orimolco/web-app:latest
+    build:
+      context: ./Front
+
+      args:
+        WEB_BUILDNUM: ${WEB_BUILDNUM:-local}
+        WEB_COMMNUM: ${WEB_COMMNUM:-unknown}
+
+    ports:
+      - "8000:8000"
+    
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
