@@ -110,7 +110,7 @@ pipeline {
         echo "Build succeeded!"
     }
     failure {
-        echo "Build failed. Check logs immediately."
+        echo "Build failed. Check logs immediately!"
     }
     }
 }
