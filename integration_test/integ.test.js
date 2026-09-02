@@ -5,7 +5,7 @@ const { resolve } = require("node:dns");
 const { getAssetAsBlob } = require("node:sea");
 const path = require('path');
 
-const composeFile = path.join(__dirname, '..', 'docker-compose.prod.yml');
+const composeFile = path.join(__dirname, '..', 'docker-compose.dev.yml');
 
 
 async function waitForService(url, timeoutMs = 15000, interMs = 500) {
