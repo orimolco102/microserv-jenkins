@@ -5,7 +5,7 @@ COMPOSE_FILE="docker-compose.prod.yml"
 NGINX_CONTAINER="nginx-gateway"
 CONF_DIR="nginx/conf.d"
 
-# Figure out which color is currently live by reading the active config
+# 1. Figure out which color is currently live by reading the active config
 if grep -q "web-blue" "$CONF_DIR/active.conf"; then
     CURRENT="blue"
     NEW="green"
@@ -17,11 +17,12 @@ fi
 echo "Current live color: $CURRENT"
 echo "Deploying new color: $NEW"
 
-#  Pull the latest images and bring up only the new color. old color keeps serving traffic untouched
+# 2. Pull the latest images and bring up ONLY the new color (old color keeps serving traffic untouched)
 docker compose -f "$COMPOSE_FILE" pull
 docker compose -f "$COMPOSE_FILE" --profile "$NEW" up -d
 
-#  Health check the new containers via the nginx container, since it shares the app-network and can resolve web-$NEW / api-$NEW by name.
+# 3. Health check the new containers — via the nginx container, since it shares
+#    the app-network and can resolve web-$NEW / api-$NEW by name.
 echo "Waiting for new containers to become healthy..."
 RETRIES=10
 SLEEP=3
@@ -39,18 +40,21 @@ done
 
 if [ "$HEALTHY" != "true" ]; then
     echo "Health check FAILED. Removing new ($NEW) containers, keeping $CURRENT live."
-    docker compose -f "$COMPOSE_FILE" --profile "$NEW" down
+    docker compose -f "$COMPOSE_FILE" rm -sf "web-$NEW" "api-$NEW"
     exit 1
 fi
 
 echo "Health check passed. Switching traffic to $NEW."
 
-# Swap nginx's routing config and reload — this is the zero-downtime moment. nginx -s reload re-reads config without dropping the listening socket.
+# 4. Swap nginx's routing config and reload — this is the zero-downtime moment.
+#    nginx -s reload re-reads config without dropping the listening socket.
 cp "$CONF_DIR/active.$NEW.conf" "$CONF_DIR/active.conf"
 docker exec "$NGINX_CONTAINER" nginx -s reload
 
-# tear down the old one.
+# 5. Now that traffic is on the new color, tear down the old one.
+#    IMPORTANT: target services by NAME, not --profile — nginx has no profile
+#    of its own, so a --profile-based "down" would incorrectly stop it too.
 echo "Stopping old ($CURRENT) containers."
-docker compose -f "$COMPOSE_FILE" --profile "$CURRENT" down
+docker compose -f "$COMPOSE_FILE" rm -sf "web-$CURRENT" "api-$CURRENT"
 
 echo "Deploy complete. Live color is now: $NEW"
