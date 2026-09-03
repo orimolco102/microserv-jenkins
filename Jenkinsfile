@@ -87,21 +87,27 @@ pipeline {
                     bat '''
                         icacls "%SSH_KEY%" /inheritance:r
                         icacls "%SSH_KEY%" /grant:r %USERNAME%:F
-
-                        scp -4 -o StrictHostKeyChecking=no -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
-                        scp -4 -o StrictHostKeyChecking=no -i "%SSH_KEY%" deploy.sh %SSH_USER%@51.20.105.107:~/deploy.sh
-                        ssh -4 -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "rm -rf ~/nginx"
-                        scp -4 -o StrictHostKeyChecking=no -r -i "%SSH_KEY%" nginx %SSH_USER%@51.20.105.107:~/nginx
                     '''
-
+        
                     retry(5) {
-                        try {
-                            bat '''
-                                ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
-                            '''
-                        } catch (e) {
-                            sleep(time: 20, unit: 'SECONDS')
-                            throw e
+                        bat '''
+                            scp -4 -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i "%SSH_KEY%" docker-compose.prod.yml %SSH_USER%@51.20.105.107:~/docker-compose.prod.yml
+                            scp -4 -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i "%SSH_KEY%" deploy.sh %SSH_USER%@51.20.105.107:~/deploy.sh
+                            ssh -4 -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "rm -rf ~/nginx"
+                            scp -4 -o StrictHostKeyChecking=no -r -o ConnectTimeout=15 -i "%SSH_KEY%" nginx %SSH_USER%@51.20.105.107:~/nginx
+                        '''
+                    }
+        
+                    script {
+                        retry(5) {
+                            try {
+                                bat '''
+                                    ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
+                                '''
+                            } catch (e) {
+                                sleep(time: 20, unit: 'SECONDS')
+                                throw e
+                            }
                         }
                     }
                 }
