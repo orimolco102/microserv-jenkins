@@ -19,7 +19,7 @@ echo "Deploying new color: $NEW"
 
 # 2. Pull the latest images and bring up ONLY the new color (old color keeps serving traffic untouched)
 docker compose -f "$COMPOSE_FILE" pull
-docker compose -f "$COMPOSE_FILE" --profile "$NEW" up -d
+docker compose -f "$COMPOSE_FILE" --profile "$NEW" up -d --force-recreate
 
 # 3. Health check the new containers — via the nginx container, since it shares
 #    the app-network and can resolve web-$NEW / api-$NEW by name.
