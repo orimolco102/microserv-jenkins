@@ -58,7 +58,7 @@ cp "$CONF_DIR/active.$NEW.conf" "$CONF_DIR/active.conf"
 docker exec "$NGINX_CONTAINER" nginx -s reload
 
 # 5. Now that traffic is on the new color, tear down the old one.
-#    IMPORTANT: target services by NAME, not --profile — nginx has no profile
+#    IMPORTANT: target services by NAME, not --profile nginx has no profile
 #    of its own, so a --profile-based "down" would incorrectly stop it too.
 echo "Stopping old ($CURRENT) containers."
 docker compose -f "$COMPOSE_FILE" rm -sf "web-$CURRENT" "api-$CURRENT"
