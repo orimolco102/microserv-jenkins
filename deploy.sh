@@ -29,12 +29,18 @@ SLEEP=3
 HEALTHY=false
 
 for i in $(seq 1 "$RETRIES"); do
-    if docker exec "$NGINX_CONTAINER" wget -q -O - --timeout=3 "http://api-$NEW:3000/health" > /dev/null 2>&1 \
-       && docker exec "$NGINX_CONTAINER" wget -q -O - --timeout=3 "http://web-$NEW:8000/status" > /dev/null 2>&1; then
+    echo "--- Attempt $i: checking api-$NEW ---"
+    docker exec "$NGINX_CONTAINER" wget -O - --timeout=3 "http://api-$NEW:3000/health"
+    API_STATUS=$?
+    echo "--- Attempt $i: checking web-$NEW ---"
+    docker exec "$NGINX_CONTAINER" wget -O - --timeout=3 "http://web-$NEW:8000/status"
+    WEB_STATUS=$?
+
+    if [ "$API_STATUS" -eq 0 ] && [ "$WEB_STATUS" -eq 0 ]; then
         HEALTHY=true
         break
     fi
-    echo "Attempt $i/$RETRIES not ready yet, retrying in ${SLEEP}s..."
+    echo "Attempt $i/$RETRIES not ready yet (api exit=$API_STATUS, web exit=$WEB_STATUS), retrying in ${SLEEP}s..."
     sleep "$SLEEP"
 done
 
