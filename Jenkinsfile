@@ -101,7 +101,7 @@ pipeline {
                         retry(5) {
                             try {
                                 bat '''
-                                    ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "rm -rf ~/nginx && tar -xzf ~/deploy_bundle.tar.gz -C ~/ && tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
+                                    ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tar -xzf ~/deploy_bundle.tar.gz -C ~/ && tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
                                 '''
                             } catch (e) {
                                 sleep(time: 30, unit: 'SECONDS')
@@ -113,7 +113,6 @@ pipeline {
             }
         }
     }
-    
 
     post {
     always {
