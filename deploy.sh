@@ -36,7 +36,11 @@ echo "Current live color: $CURRENT"
 echo "Deploying new color: $NEW"
 
 # 2. Pull the latest images and bring up ONLY the new color (old color keeps serving traffic untouched)
-docker compose -f "$COMPOSE_FILE" pull
+echo "Deploying image tag: ${IMAGE_TAG:-latest}"
+if ! docker compose -f "$COMPOSE_FILE" pull; then
+    echo "ERROR: docker compose pull failed. Aborting deploy — old $CURRENT stays live."
+    exit 1
+fi
 docker compose -f "$COMPOSE_FILE" --profile "$NEW" up -d --force-recreate
 
 # 3. Health check the new containers — via the nginx container, since it shares

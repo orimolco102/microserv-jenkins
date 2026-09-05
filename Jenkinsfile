@@ -87,21 +87,21 @@ pipeline {
                     bat '''
                         icacls "%SSH_KEY%" /inheritance:r
                         icacls "%SSH_KEY%" /grant:r %USERNAME%:F
-
+        
                         tar -czf deploy_bundle.tar.gz docker-compose.prod.yml deploy.sh nginx
                     '''
-
+        
                     retry(5) {
                         bat '''
                             scp -4 -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i "%SSH_KEY%" deploy_bundle.tar.gz %SSH_USER%@51.20.105.107:~/deploy_bundle.tar.gz
                         '''
                     }
-
+        
                     script {
                         retry(5) {
                             try {
                                 bat '''
-                                    ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "tar -xzf ~/deploy_bundle.tar.gz -C ~/ && tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
+                                    ssh -4 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=10 -o ConnectTimeout=15 -i "%SSH_KEY%" %SSH_USER%@51.20.105.107 "export IMAGE_TAG=%BUILD_NUMBER% && tar -xzf ~/deploy_bundle.tar.gz -C ~/ && tr -d '\\r' < ~/deploy.sh > ~/deploy_fixed.sh && mv ~/deploy_fixed.sh ~/deploy.sh && chmod +x ~/deploy.sh && cd ~ && ./deploy.sh"
                                 '''
                             } catch (e) {
                                 sleep(time: 30, unit: 'SECONDS')
