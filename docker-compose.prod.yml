@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   web-blue:
-    image: orimolco/web-app:latest
+    image: orimolco/web-app:${IMAGE_TAG:-latest}
     container_name: web-blue
     expose:
       - "8000"
@@ -25,7 +25,7 @@ services:
     profiles: ["blue"]
 
   web-green:
-    image: orimolco/web-app:latest
+    image: orimolco/web-app:${IMAGE_TAG:-latest}
     container_name: web-green
     expose:
       - "8000"
@@ -37,7 +37,7 @@ services:
     profiles: ["green"]
 
   api-blue:
-    image: orimolco/api-service:latest
+    image: orimolco/api-service:${IMAGE_TAG:-latest}
     container_name: api-blue
     expose:
       - "3000"
@@ -47,7 +47,7 @@ services:
     profiles: ["blue"]
 
   api-green:
-    image: orimolco/api-service:latest
+    image: orimolco/api-service:${IMAGE_TAG:-latest}
     container_name: api-green
     expose:
       - "3000"
