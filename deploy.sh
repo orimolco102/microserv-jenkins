@@ -30,11 +30,15 @@ HEALTHY=false
 
 for i in $(seq 1 "$RETRIES"); do
     echo "--- Attempt $i: checking api-$NEW ---"
+    set +e
     docker exec "$NGINX_CONTAINER" wget -O - --timeout=10 "http://api-$NEW:3000/health"
     API_STATUS=$?
+    set -e
     echo "--- Attempt $i: checking web-$NEW ---"
+    set +e
     docker exec "$NGINX_CONTAINER" wget -O - --timeout=10 "http://web-$NEW:8000/status"
     WEB_STATUS=$?
+    set -e
 
     if [ "$API_STATUS" -eq 0 ] && [ "$WEB_STATUS" -eq 0 ]; then
         HEALTHY=true
