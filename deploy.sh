@@ -14,6 +14,24 @@ else
     NEW="blue"
 fi
 
+# Sanity check: does the assumed CURRENT color's container actually exist and run?
+# If not, active.conf is stale (e.g. from an interrupted prior deploy) — self-correct
+# by treating whichever color IS actually running as current, if any.
+if ! docker ps --format '{{.Names}}' | grep -q "^web-$CURRENT$"; then
+    echo "WARNING: active.conf claims '$CURRENT' is live, but web-$CURRENT is not running."
+    if docker ps --format '{{.Names}}' | grep -q "^web-$NEW$"; then
+        echo "Found web-$NEW actually running instead — correcting CURRENT to '$NEW'."
+        TMP="$CURRENT"
+        CURRENT="$NEW"
+        NEW="$TMP"
+        cp "$CONF_DIR/active.$CURRENT.conf" "$CONF_DIR/active.conf"
+        docker exec "$NGINX_CONTAINER" nginx -s reload 2>/dev/null || true
+    else
+        echo "ERROR: neither web-blue nor web-green is running. Manual intervention required."
+        exit 1
+    fi
+fi
+
 echo "Current live color: $CURRENT"
 echo "Deploying new color: $NEW"
 
